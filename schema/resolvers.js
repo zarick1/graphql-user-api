@@ -2,9 +2,14 @@ import User from '../models/User.js';
 
 const resolvers = {
   Query: {
-    users: async () => {
+    users: async (_, { name, email }) => {
       try {
-        return await User.find();
+        //console.log(name, email);
+        const filter = {};
+        if (name) filter.name = { $regex: name, $options: 'i' }; // filter.name = name, if we want to search only by full name
+        if (email) filter.email = { $regex: email, $options: 'i' }; // filter.email = email, if we want to search only by full email
+        //console.log(filter);
+        return await User.find(filter);
       } catch (error) {
         throw new Error('Error fetching users');
       }
