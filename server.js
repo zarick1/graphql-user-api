@@ -1,16 +1,13 @@
 import express from 'express';
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer } from 'apollo-server-express';
+import mongoose from 'mongoose';
 import dotEnv from 'dotenv';
 import cors from 'cors';
 
-dotEnv.config();
+import typeDefs from './schema/typeDefs.js';
+import resolvers from './schema/resolvers.js';
 
-const typeDefs = gql`
-  type Query {
-    greetings: String
-  }
-`;
-const resolvers = {};
+dotEnv.config();
 
 const startServer = async () => {
   const app = express();
@@ -30,16 +27,27 @@ const startServer = async () => {
 
   const PORT = process.env.PORT || 3000;
 
+  const DB = process.env.DATABASE.replace(
+    '<PASSWORD>',
+    process.env.DATABASE_PASSWORD
+  );
+
   //Test
-  app.use('/', (req, res, next) => {
-    res.send({ message: 'HEllo' });
-  });
+  // app.use('/', (req, res, next) => {
+  //   res.send({ message: 'Hello' });
+  // });
 
   // Start server
-  app.listen(PORT, () => {
-    console.log(`Server listening on PORT: ${PORT}`);
-    console.log(`Graphql Endpoint: ${appoloServer.graphqlPath}`);
-  });
+  try {
+    await mongoose.connect(DB);
+    console.log('Database successfully connected!');
+    app.listen(PORT, () => {
+      console.log(`Server listening on PORT: ${PORT}`);
+      console.log(`Graphql Endpoint: ${appoloServer.graphqlPath}`);
+    });
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+  }
 };
 
 startServer();
