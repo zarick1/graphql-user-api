@@ -107,7 +107,3 @@ mutation {
   deleteUser(id: "mongo_object_id")
 }
 ```
-
-## 📹 Video Demonstration
-
-[Link to video here]()
