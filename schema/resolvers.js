@@ -20,11 +20,19 @@ const resolvers = {
           throw new Error('Invalid email format');
         }
 
-        const user = new User({ name, email });
-        await user.save();
+        const user = await User.create({ name, email });
         return user;
       } catch (error) {
         throw new Error('Error adding user:' + error.message);
+      }
+    },
+
+    deleteUser: async (_, { id }) => {
+      try {
+        const result = await User.findByIdAndDelete(id);
+        return !!result;
+      } catch (error) {
+        throw new Error('Error deleting user: ' + error.message);
       }
     },
   },
